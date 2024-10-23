@@ -96,7 +96,15 @@ const createService = async (req, res) => {
 
 const getAllServices = async (req, res) => {
 	try {
-		const services = await Service.find().populate('provider');
+		const services = await Service.find()
+			.populate('provider')
+			.populate({
+				path: 'reviews',
+				populate: {
+					path: 'consumer',
+					select: 'name email profileImage',
+				},
+			});
 		if (services.length === 0) {
 			return res
 				.status(404)

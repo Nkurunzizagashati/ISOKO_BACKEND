@@ -5,6 +5,8 @@ import routes from './routes/index.js';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import generateAccessToken from './controllers/accessToken.js';
+import { logout } from './controllers/functions.js';
 
 dotenv.config();
 
@@ -18,9 +20,12 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(
 	cors({
-		origin: ['https://isoko-dqe.pages.dev'],
+		origin: [
+			'https://isoko-dqe.pages.dev',
+			'http://localhost:5173',
+		],
 		credentials: true,
-		methods: ['GET', 'POST', 'PUT', 'DELETE'],
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 	})
 );
 
@@ -30,9 +35,8 @@ connectDB();
 
 // END POINTS
 
-app.get('/', (req, res) => {
-	res.send('Welcome to Community connect...');
-});
+app.get('/api/token', generateAccessToken);
+app.get('/api/logout', logout);
 
 // Import routes
 

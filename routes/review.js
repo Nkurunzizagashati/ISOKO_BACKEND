@@ -8,8 +8,12 @@ import {
 
 const router = express.Router();
 
-router.get('/', checkSchema(getReviewsValidator), getReviews);
+router.get('/:serviceId', checkSchema(getReviewsValidator), getReviews);
 
-router.post('/', checkSchema(createReviewValidator), addReview);
+router.post(
+	'/:serviceId',
+	checkSchema(createReviewValidator),
+	addReview
+);
 
 export default router;

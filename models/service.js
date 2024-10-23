@@ -14,6 +14,12 @@ const serviceSchema = new Schema({
 		ref: 'Provider',
 		required: true,
 	},
+	reviews: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'Review',
+		},
+	],
 	price: {
 		type: Number,
 		required: true,

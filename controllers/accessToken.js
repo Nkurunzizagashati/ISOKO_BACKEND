@@ -1,27 +1,48 @@
-import RefreshToken from '../models/token.js';
+import jwt from 'jsonwebtoken';
+import Consumer from '../models/consumer.js';
+import Provider from '../models/provider.js';
+import { generateJWTauthToken } from '../utils/authTokens.js';
 
-const refreshToken = req.cookies.refreshToken;
+const generateAccessToken = async (req, res) => {
+	try {
+		const refreshToken = req.cookies?.refreshToken;
 
-try {
-	const decodedRefreshToken = jwt.verify(
-		refreshToken,
-		process.env.REFRESH_TOKEN_SECRET
-	);
+		if (!refreshToken) {
+			return res.status(401).json({ message: 'Unauthorized' });
+		}
 
-	// Find the refresh token in the database to ensure it's still valid
-	const storedToken = await RefreshToken.findOne({
-		token: refreshToken,
-	});
-	if (!storedToken) {
-		return res.status(403).json({ message: 'Not authorized' });
+		const decodedRefreshToken = await jwt.verify(
+			refreshToken,
+			process.env.JWT_REFRESH_SECRET
+		);
+
+		const { email } = decodedRefreshToken;
+
+		console.log(email);
+
+		const authConsumer = await Consumer.findOne({ email });
+		const authProvider = await Provider.findOne({ email });
+
+		const authUser = authConsumer || authProvider;
+
+		if (!authUser) {
+			return res.status(401).json({ message: 'Unauthorized' });
+		}
+
+		const userData = authUser.toObject();
+		delete userData.password;
+
+		const accessToken = generateJWTauthToken({
+			email: authUser.email,
+		});
+
+		return res.status(200).json({ accessToken, user: userData });
+	} catch (error) {
+		console.error(error);
+		return res
+			.status(500)
+			.json({ message: 'Something went wrong' });
 	}
+};
 
-	// Generate a new accessToken
-	accessToken = generateJWTauthToken({
-		email: decodedRefreshToken.email,
-	});
-
-	res.setHeader('Authorization', `Bearer ${accessToken}`);
-} catch (err) {
-	return res.status(403).json({ message: 'Something went wrong' });
-}
+export default generateAccessToken;

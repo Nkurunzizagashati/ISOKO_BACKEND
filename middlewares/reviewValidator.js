@@ -1,33 +1,9 @@
 const createReviewValidator = {
-	consumer: {
-		notEmpty: {
-			errorMessage: 'Consumer ID should not be empty',
-		},
-		isMongoId: {
-			errorMessage: 'Consumer should be a valid ObjectId',
-		},
-	},
-	provider: {
-		notEmpty: {
-			errorMessage: 'Provider ID should not be empty',
-		},
-		isMongoId: {
-			errorMessage: 'Provider should be a valid ObjectId',
-		},
-	},
-	service: {
-		notEmpty: {
-			errorMessage: 'Service ID should not be empty',
-		},
-		isMongoId: {
-			errorMessage: 'Service should be a valid ObjectId',
-		},
-	},
 	rating: {
 		notEmpty: {
 			errorMessage: 'Rating should not be empty',
 		},
-		isInt: {
+		isFloat: {
 			options: { min: 1, max: 5 },
 			errorMessage: 'Rating should be an integer between 1 and 5',
 		},

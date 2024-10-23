@@ -88,6 +88,13 @@ const registerConsumer = async (req, res) => {
 		const consumerData = consumer.toObject();
 		delete consumerData.password;
 
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'Strict', // Prevent CSRF attacks
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+		});
+
 		res.status(201).json({
 			message: 'Consumer registered successfully',
 			token: accessToken,
@@ -145,6 +152,22 @@ const loginConsumer = async (req, res) => {
 
 		const consumerData = consumer.toObject();
 		delete consumerData.password;
+
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'Strict', // Prevent CSRF attacks
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+		});
+
+		// Set the refresh token as an HTTP-only cookie
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'Strict', // Prevent CSRF attacks
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+		});
+
 		res.status(200).json({
 			message: 'Logged in successfully',
 			token: accessToken,
