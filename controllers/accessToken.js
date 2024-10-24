@@ -10,6 +10,7 @@ const generateAccessToken = async (req, res) => {
 		if (!refreshToken) {
 			return res.status(401).json({
 				message: 'Unauthorized, no access token found',
+				cookies: req.cookies,
 			});
 		}
 
@@ -28,11 +29,9 @@ const generateAccessToken = async (req, res) => {
 		const authUser = authConsumer || authProvider;
 
 		if (!authUser) {
-			return res
-				.status(401)
-				.json({
-					message: 'Unauthorized, invalid access token',
-				});
+			return res.status(401).json({
+				message: 'Unauthorized, invalid access token',
+			});
 		}
 
 		const userData = authUser.toObject();
