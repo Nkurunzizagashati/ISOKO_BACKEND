@@ -8,7 +8,9 @@ const generateAccessToken = async (req, res) => {
 		const refreshToken = req.cookies?.refreshToken;
 
 		if (!refreshToken) {
-			return res.status(401).json({ message: 'Unauthorized' });
+			return res.status(401).json({
+				message: 'Unauthorized, no access token found',
+			});
 		}
 
 		const decodedRefreshToken = await jwt.verify(
@@ -26,7 +28,11 @@ const generateAccessToken = async (req, res) => {
 		const authUser = authConsumer || authProvider;
 
 		if (!authUser) {
-			return res.status(401).json({ message: 'Unauthorized' });
+			return res
+				.status(401)
+				.json({
+					message: 'Unauthorized, invalid access token',
+				});
 		}
 
 		const userData = authUser.toObject();
